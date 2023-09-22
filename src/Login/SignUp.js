@@ -9,11 +9,12 @@ import { toast } from 'react-toastify';
 
 const Client_id = "290081485876-km2aepfp9ajsmskkhettq5tlhubn6vk2.apps.googleusercontent.com";
 
-function Login() {
+function SignUp() {
     const [click, setClick] = useState(false);
     const [logindata, setLogindata] = useState({
         email: '',
         password: '',
+        cpassword: '',
     })
 
     const handlePassword = (e) => {
@@ -45,9 +46,10 @@ function Login() {
     <Box sx={{width:'100vw', height: '100vh' , display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Paper elevation={3}>
             <Grid component='form' autoComplete="off" container sx={{display: 'flex', flexDirection: 'column', padding: '50px 50px'}}>
-                <Typography sx={{margin: '5px 10px', fontFamily: 'Roboto Slab, serif',fontSize: '30px', width: '300px'}}>Login</Typography>
-                <TextField name='email'  value={logindata.email} onChange={handleChange} sx={{margin: '10px'}} label='Email' type='email' />
+                <Typography sx={{margin: '5px 10px', fontFamily: 'Roboto Slab, serif',fontSize: '30px', width: '300px'}}>Sign Up</Typography>
+                <TextField name='email'  value={logindata.email} onChange={handleChange} sx={{margin: '10px',}} label='Email' type='email' />
                 <TextField name='password' value={logindata.password} onChange={handleChange} sx={{margin: '10px'}} label='Password' type={click ? 'text' : 'password'} InputProps={{endAdornment: (<InputAdornment sx={{cursor: 'pointer', fontSize: '22px'}} position='end' onClick={handlePassword}>{click ? <BsEyeSlash/>: <BsEye/>} </InputAdornment>)}} />
+                <TextField name='cpassword' value={logindata.cpassword} onChange={handleChange} sx={{margin: '10px'}} label='Confirm Password' />
                 <Button variant='contained' onClick={handleSubmit} sx={{margin: '0 10px 10px 10px'}} >Create an account</Button>
                 <Grid sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '5px 10px'}}>
                     <Divider sx={{height: '0px', background: '#C5C5C5', width: '65px'}} />
@@ -55,10 +57,10 @@ function Login() {
                     <Divider sx={{height: '0px', background: '#C5C5C5', width: '65px'}}/>
                 </Grid>
                 <Grid sx={{padding: '10px'}}>
-                    <GoogleLoginOption name={'Login with Google'} />
+                    <GoogleLoginOption name={'Signup with Google'} />
                 </Grid>
-                <Link to='/signup' style={{textDecoration: 'none'}}>
-                    <Typography sx={{margin: '5px 10px',fontSize: '14px', color: '#000000' }}>Don't have an account <span style={{color: 'blue'}}>Create account</span></Typography>
+                <Link to='/' style={{textDecoration: 'none'}}>
+                    <Typography sx={{margin: '5px 10px',fontSize: '14px', color: '#000000' }}>Already had an account? <span style={{color: 'blue'}}>Login</span></Typography>
                 </Link> 
                 <Toast />
             </Grid>
@@ -67,4 +69,4 @@ function Login() {
   )
 }
 
-export default Login
+export default SignUp;

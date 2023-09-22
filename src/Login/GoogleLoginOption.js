@@ -7,7 +7,7 @@ import './login.css'
 
 const Client_id = "290081485876-km2aepfp9ajsmskkhettq5tlhubn6vk2.apps.googleusercontent.com";
 
-const GoogleLoginOption = ({handleLogin}) => {
+const GoogleLoginOption = ({handleLogin, name}) => {
 
     const onFailure = (res) => {
         console.log('Login Failed ! res :', res);
@@ -42,7 +42,7 @@ const GoogleLoginOption = ({handleLogin}) => {
                   disabled={renderProps.disabled}
                   className="google-login-button"
                 >
-                <FcGoogle className='google-icon' /> Login with Google
+                <FcGoogle className='google-icon' /> {name}
                 </Button>
               )}
           />
