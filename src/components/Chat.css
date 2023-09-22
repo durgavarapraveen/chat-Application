@@ -1,0 +1,76 @@
+.backgroungImage {
+    background-image: url('https://img.freepik.com/premium-photo/abstract-multi-color-background-blurred-striped-wave_494741-17093.jpg?w=1060');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    position: relative;
+    padding: 5px ;
+    display: flex;
+    flex-direction: column;
+}
+.btn-send {
+    position: absolute;
+    bottom: 25px;
+    float: right;
+    right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.btn-send:hover {
+    background-color: #F5F5F5;
+    border-radius: 5px;
+}
+.icon-send {
+    font-size: 25px;
+    padding: 8px;
+    border-radius: 5px;
+}
+.Sender-profile {
+    display: flex;
+    flex-direction: row;
+    height: 60px;
+    background-color: #ffffff;
+    align-items: center;
+}
+.photo-chat {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-left: 20px;
+}
+
+.chat-scroll {
+    height: 'calc(100vh - 120px)';
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-right: 20px;
+}
+::-webkit-scrollbar {
+    width: 0;
+}
+.column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.message-send {
+    width: 100%;
+    margin: 2px 0px 2px 0px;
+    display: flex;
+    justify-content: end;
+}
+.message-recieve {
+    width: auto;
+    display: inline-block;
+    background: transparent;
+    max-width: 500px;
+    height: auto;
+    margin: 2px 2px 2px 20px;
+}
