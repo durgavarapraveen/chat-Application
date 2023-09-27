@@ -77,3 +77,8 @@
 .viewtop {
     width: calc(100vw - 305px);
 }
+.back-icon {
+    padding: 10px;
+    margin-left: 10px;
+    font-size: 25px;
+}

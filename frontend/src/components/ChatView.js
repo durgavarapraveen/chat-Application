@@ -38,13 +38,22 @@ function Chat({filledform}) {
         person: false,
         room: '1_1',
     });
+
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
+
         const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/chat/' + message.room + '/');
+
+        let hasConnected = false;
+
         client.onopen = () => {
-            console.log("WebSocket Client Connected");
+            if (!hasConnected) {
+                console.log("WebSocket Client Connected");
+                hasConnected = true;
+            }
         };
+
 
         client.onmessage = (message) => {
         const dataFromServer = JSON.parse(message.data);
@@ -65,20 +74,26 @@ function Chat({filledform}) {
     }, []);
 
     const handleMessageSend = (e) => {
-        client.send(
-            JSON.stringify({
-                type: "message",
-                text: messages,
-            })
-        );
-        messages = "";
+        // client.send(
+        //     JSON.stringify({
+        //         type: "message",
+        //         text: messages,
+        //     })
+        // );
+        if(message.text != "") {
+            const value = "";
+            setMessage({...message, text: value})
+            e.preventDefault();
+            console.log('msg send')
+        }
         e.preventDefault();
     }
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setMessage({...messages, [name]: value})
+        const value = e.target.value;
+        setMessage({...message, text: value})
     }
+
 
 
   return (
@@ -88,6 +103,7 @@ function Chat({filledform}) {
                 <Box sx={{position: 'relative', height: '100vh',overflow: 'hidden', width: '100%'}}>
                     <Grid className='Sender-profile'>
                         {/* To display name and photo of the person with who we are talking */}
+                        <i class="fa-solid fa-arrow-left back-icon"></i>
                         <img src='photos/Praveen Profile Pic.png' className='photo-chat' />
                         <Grid sx={{display: 'flex', flexDirection: 'column', marginLeft: '10px'}}>
                             <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '19px', fontWeight: 700}}>John</Typography>
