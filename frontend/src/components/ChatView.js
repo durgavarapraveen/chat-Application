@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Paper, TextField, TextareaAutosize, Typography } from '@mui/material'
 import React, {Component, useState, useEffect} from 'react';
-import {w3cwebsocket as W3Cwebsocket} from 'websocket';
+import {w3cwebsocket as W3Cwebsocket, client} from 'websocket';
 import { makeStyles } from '@mui/styles';
 import {AiOutlineSend} from 'react-icons/ai';
 import './Chat.css';
@@ -33,16 +33,15 @@ function Chat({filledform}) {
     const [info, setInfo] = useState([]);
     const [message, setMessage] = useState({
         filledForm: true,
-        message: [],
+        text: '',
         name: '',
         person: false,
-        // false = we sent message
         room: '1_1',
     });
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/' + message.room + '/');
+        const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/chat/' + message.room + '/');
         client.onopen = () => {
             console.log("WebSocket Client Connected");
         };
@@ -65,6 +64,21 @@ function Chat({filledform}) {
         };
     }, []);
 
+    const handleMessageSend = (e) => {
+        client.send(
+            JSON.stringify({
+                type: "message",
+                text: messages,
+            })
+        );
+        messages = "";
+        e.preventDefault();
+    }
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setMessage({...messages, [name]: value})
+    }
 
 
   return (
@@ -80,86 +94,35 @@ function Chat({filledform}) {
                             <Typography className='p' sx={{fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0', fontSize: '12px'}}>select for more info</Typography>
                         </Grid>
                     </Grid>
+
+
                     <Grid className='backgroungImage'>
                         <Grid className='chat-scroll'>
 
                             <Grid sx={{display: 'flex', flexDirection: 'column', width: '100%', overflowY: 'scroll', overflowX: 'hidden', height: 'calc(100vh - 140px)'}}>
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>Hello Rosie how are you.</Typography>
-                                    </Grid>
-                                </Grid>                                
-                                <Grid className= {message.person ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px' }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Rosie</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>Hello Jack, I am fine.</Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid className= {message.person ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px' }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Rosie</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>How are you?</Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid className= {message.person ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px' }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Rosie</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>What are you doing?</Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>yeah I am good. yeah I am good. yeah I am good. yeah I am good. yeah I am good.yeah I am good. yeah I am good.yeah I am good.</Typography>
-                                    </Grid>
-                                </Grid>    
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>I am travelling to Bali for vacation.</Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>yeah I am good.</Typography>
-                                    </Grid>
-                                </Grid>    
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>I am travelling to Bali for vacation.</Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>yeah I am good.</Typography>
-                                    </Grid>
-                                </Grid>    
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>I am travelling to Bali for vacation.</Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                    <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                        <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                        <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>yeah I am good.</Typography>
-                                    </Grid>
-                                </Grid>
 
-
+                                {
+                                    messages.map((mess) => {
+                                        <>
+                                            <Grid className={true ? 'message-recieve' : 'message-send'} >
+                                                <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
+                                                    <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
+                                                    <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>{mess.text}</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </>
+                                    })
+                                }
 
                             </Grid> 
                         </Grid>
                     </Grid>
+
+
                     <Grid component='form' sx={{position: 'absolute', bottom: '0', width: '100%', backgroundColor: '#ffffff',}}>
                         <Grid sx={{position: 'relative'}}>
-                            <TextareaAutosize className={classes.textarea} minRows={1} style={{width: '100%', padding: '3px 0px', border: 'none', backgroundColor: '#ffffff',outline: 'none', minHeight: '20px', maxHeight: '60px', fontSize: '16px', padding: '20px 50px', fontFamily: 'Mooli, sans-serif'}} placeholder='Type youe message' />
-                            <button className='btn-send'><AiOutlineSend className='icon-send' /></button>
+                            <TextareaAutosize name='text' className={classes.textarea} minRows={1} style={{width: '100%', padding: '3px 0px', border: 'none', backgroundColor: '#ffffff',outline: 'none', minHeight: '20px', maxHeight: '60px', fontSize: '16px', padding: '20px 50px', fontFamily: 'Mooli, sans-serif'}} placeholder='Type youe message' value={message.text} onChange={handleChange}/>
+                            <button className='btn-send' onClick={handleMessageSend}><AiOutlineSend className='icon-send' /></button>
                         </Grid>
                     </Grid>
 

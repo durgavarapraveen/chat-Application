@@ -44,8 +44,7 @@ function SignUp() {
 
     const handleImage = (e) => {
         const selectedphoto = e.target.files[0]
-        const {name} = e.target;
-        setLogindata({...logindata, [name]: selectedphoto})
+        setLogindata({...logindata, image: selectedphoto})
     }
 
     const handleSubmit = async(e) => {
@@ -82,7 +81,7 @@ function SignUp() {
                 <Typography sx={{margin: '0 10px',fontFamily: 'Roboto Slab, serif', fontSize: '12px', }}>minimun 8 letters</Typography>
                 <TextField required name='cpassword' value={logindata.cpassword} onChange={handleChange} sx={{margin: '10px'}} label='Confirm Password' type='password'/>
                 <Typography required sx={{margin: '0 10px', color: 'gray'}}>Upload your profile picture</Typography>
-                <input required name='photo' value={logindata.image} onChange={handleImage} type='file' accept='image/*' className='input-photo' />
+                <input required name='photo' onChange={handleImage} type='file' accept='image/*' className='input-photo' />
 
                 <Button variant='contained' onClick={handleSubmit} sx={{margin: '0 10px 10px 10px'}} >Create an account</Button>
 
