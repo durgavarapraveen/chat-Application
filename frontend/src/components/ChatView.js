@@ -26,18 +26,29 @@ const FormStyles = makeStyles((theme) => ({
 }));
 
 
-function Chat({filledform}) {
+function Chat({data}) {
     const classes = FormStyles;
     const navigate = useNavigate();
     const [cookie] = useCookies(['access_token']);
     const [info, setInfo] = useState([]);
     const [message, setMessage] = useState({
-        filledForm: true,
+        display: false,
         text: '',
         name: '',
         person: false,
         room: '1_1',
     });
+
+    useEffect(() => {
+        if (data.room_Type === 1 || data.room_Type === 2) {
+          const updatedMessage = {
+            ...message, 
+            display: true, 
+            room: data.room_No,
+          };
+          setMessage(updatedMessage);
+        }
+      }, [data.room_Type]);
 
     const [messages, setMessages] = useState([]);
 
@@ -94,16 +105,20 @@ function Chat({filledform}) {
         setMessage({...message, text: value})
     }
 
+    const handleBack = () => {
+        setMessage({...message, filledForm: false})
+    }
+
 
 
   return (
     <Box className='viewtop'>
         {
-            message.filledForm ? (
+            message.display ? (
                 <Box sx={{position: 'relative', height: '100vh',overflow: 'hidden', width: '100%'}}>
                     <Grid className='Sender-profile'>
                         {/* To display name and photo of the person with who we are talking */}
-                        <i class="fa-solid fa-arrow-left back-icon"></i>
+                        <i class="fa-solid fa-arrow-left back-icon" onClick={handleBack}></i>
                         <img src='photos/Praveen Profile Pic.png' className='photo-chat' />
                         <Grid sx={{display: 'flex', flexDirection: 'column', marginLeft: '10px'}}>
                             <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '19px', fontWeight: 700}}>John</Typography>

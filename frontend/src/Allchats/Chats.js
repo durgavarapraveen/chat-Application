@@ -4,14 +4,12 @@ import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function Chats({ searchText }) {
+export default function Chats({ searchText, setData}) {
   const navigate = useNavigate();
   const [cookie] = useCookies(['access_token']);
   const [info, setInfo] = useState([]);
   const [chatdetails, setChatDetails] = useState([]);
   const [filteredChatdetails, setFilteredDetails] = useState([]);
-  
-  console.log(cookie.refresh_token);
 
   useEffect(() => {
     if (!cookie.access_token) {
@@ -29,12 +27,13 @@ export default function Chats({ searchText }) {
           },
         });
         const data = res.data;
+        console.log(data);
         setInfo(data);
         const newChatDetails = data.map((chat) => {
           if (chat.room_type === 2) {
-            return chat.display_name;
+            return {name: chat.display_name, room_No: chat.room_name, room_Type: chat.room_type};
           } else {
-            return chat.room_members[1];
+            return {name: chat.room_members[1], room_No: chat.room_name, room_Type: chat.room_type}
           }
         });
 
@@ -48,14 +47,15 @@ export default function Chats({ searchText }) {
 
   useEffect(() => {
     const filteredDetails = chatdetails.filter((chatdetail) =>
-      chatdetail.toLowerCase().includes(searchText.toLowerCase())
+      chatdetail.name.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredDetails(filteredDetails);
   }, [chatdetails, searchText]);
 
   const handleClicked = () => {
-    
+    setData(chatdetails);
   }
+  
 
   return (
     <div
@@ -71,7 +71,7 @@ export default function Chats({ searchText }) {
         <div key={index}  >
           <div>
             <button onClick={handleClicked} className='btn-clicked'>
-              <Chat name={chatDetail}   />
+              <Chat name={chatDetail.name} status={chatDetail.room_type}  />
             </button>
           </div>
         </div>
