@@ -16,11 +16,11 @@ class ChatsSerializer(serializers.ModelSerializer):
 
 class RoomsSerializer(serializers.ModelSerializer):
     # room_members = serializers.SerializerMethodField('get_room_members')
-    dp = serializers.SerializerMethodField('get_dp')
+    # dp = serializers.SerializerMethodField('get_dp')
     other_users = serializers.SerializerMethodField('get_other_users')
     class Meta:
         model = Room
-        fields = ['users', 'room_type', 'room_name', 'display_name', 'other_users', 'dp']
+        fields = ['users', 'room_type', 'room_name', 'display_name', 'other_users']
 
     def get_other_users(self, instance):
         usernames = []
@@ -29,11 +29,11 @@ class RoomsSerializer(serializers.ModelSerializer):
                 usernames.append(user.username)
         return 
     
-    def get_dp(self, instance):
-        if instance.room_type == 1:
-            for user in instance.users.all():
-                if user.id!=self.context.get("user_id"):
-                    return user.profile_photo
-        elif instance.room_type == 2:
-            return instance.display_photo
+    # def get_dp(self, instance):
+    #     if instance.room_type == 1:
+    #         for user in instance.users.all():
+    #             if user.id!=self.context.get("user_id"):
+    #                 return user.profile_photo
+    #     elif instance.room_type == 2:
+    #         return instance.display_photo
     

@@ -30,8 +30,6 @@ export default function Chats({ searchText }) {
         });
         const data = res.data;
         setInfo(data);
-
-        // Collect chat details based on room_type
         const newChatDetails = data.map((chat) => {
           if (chat.room_type === 2) {
             return chat.display_name;
@@ -46,7 +44,7 @@ export default function Chats({ searchText }) {
       }
     };
     getData();
-  });
+  }, []);
 
   useEffect(() => {
     const filteredDetails = chatdetails.filter((chatdetail) =>
@@ -56,7 +54,7 @@ export default function Chats({ searchText }) {
   }, [chatdetails, searchText]);
 
   const handleClicked = () => {
-    alert('clicked');
+    
   }
 
   return (
@@ -70,9 +68,11 @@ export default function Chats({ searchText }) {
       className="custom-scrollbar"
     >
       {filteredChatdetails.map((chatDetail, index) => (
-        <div key={index} onClick={handleClicked} >
+        <div key={index}  >
           <div>
-            <Chat name={chatDetail}/>
+            <button onClick={handleClicked} className='btn-clicked'>
+              <Chat name={chatDetail}   />
+            </button>
           </div>
         </div>
       ))}

@@ -26,39 +26,46 @@ const FormStyles = makeStyles((theme) => ({
 }));
 
 
-function Chat() {
+function Chat({filledform}) {
     const classes = FormStyles;
     const navigate = useNavigate();
     const [cookie] = useCookies(['access_token']);
     const [info, setInfo] = useState([]);
     const [message, setMessage] = useState({
-        filledForm: false,
+        filledForm: true,
         message: [],
         name: '',
         person: false,
         // false = we sent message
-        room: '',
-    })
+        room: '1_1',
+    });
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        const getData = async () => {
-          const id = cookie.access_token;
-          try {
-            const res = await axios.get('http://127.0.0.1:8000/chat/get_rooms/', {
-              headers: {
-                Authorization: 'Bearer ' + id,
-              },
-            });
-            const data = res.data;
-            setInfo(data);
-            console.log(res.data);
-          } catch (error) {
-            console.error(error);
-          }
+        const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/' + message.room + '/');
+        client.onopen = () => {
+            console.log("WebSocket Client Connected");
         };
-        getData();
-      });
-      
+
+        client.onmessage = (message) => {
+        const dataFromServer = JSON.parse(message.data);
+        if (dataFromServer) {
+            setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+                msg: dataFromServer.text,
+                name: dataFromServer.sender,
+            },
+            ]);
+        }
+        };
+
+        return () => {
+        client.close();
+        };
+    }, []);
+
+
 
   return (
     <Box className='viewtop'>

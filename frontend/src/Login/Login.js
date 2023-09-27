@@ -34,7 +34,7 @@ function Login() {
             })
         };
         gapi.load('client:auth2', start)
-    })
+    }, [])
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -42,8 +42,6 @@ function Login() {
     }
 
     const handleSubmit = async(e) => {
-        e.preventDefault();
-        console.log(logindata);
         
         try {
             const res = await axios.post('http://127.0.0.1:8000/users/token/', {'username': logindata['email'], 'password': logindata['password']}, {
@@ -55,7 +53,7 @@ function Login() {
             setCookies('access_token', res.data.access)
             setrefreshCookies('refresh_token', res.data.refresh)
     
-            console.log(data);
+            console.log(res.data);
             navigate('/home')
 
             // toast.success('Login Success !')

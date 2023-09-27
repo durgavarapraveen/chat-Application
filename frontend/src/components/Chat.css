@@ -11,7 +11,7 @@
 }
 .btn-send {
     position: absolute;
-    bottom: 25px;
+    bottom: 15px;
     float: right;
     right: 15px;
     display: flex;
@@ -73,4 +73,7 @@
     max-width: 500px;
     height: auto;
     margin: 2px 2px 2px 20px;
+}
+.viewtop {
+    width: calc(100vw - 305px);
 }
