@@ -46,7 +46,7 @@ class RoomsApiView(APIView):
         access_token = AccessToken(access_token)
         user = ChatUser.objects.get(id=int(access_token['user_id']))
         rooms = user.rooms.all()
-        rooms_data = RoomsSerializer(rooms, many=True)
+        rooms_data = RoomsSerializer(rooms, many=True, context={'user_id':user.id})
         return Response(rooms_data.data)
 
 
