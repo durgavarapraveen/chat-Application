@@ -42,7 +42,7 @@ class RoomsApiView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        access_token = request.data['access']
+        access_token = str(request.headers['Authorization']).split(' ')[1]
         access_token = AccessToken(access_token)
         user = ChatUser.objects.get(id=int(access_token['user_id']))
         rooms = user.rooms.all()

@@ -6,15 +6,20 @@ import { gapi } from 'gapi-script';
 import {BsEye, BsEyeSlash} from 'react-icons/bs';
 import Toast from '../global/Toast';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from "react-cookie";
 
 const Client_id = "290081485876-km2aepfp9ajsmskkhettq5tlhubn6vk2.apps.googleusercontent.com";
 
 function SignUp() {
+    const navigate = useNavigate();
     const [click, setClick] = useState(false);
     const [logindata, setLogindata] = useState({
         email: '',
         password: '',
         cpassword: '',
+        username: '',
     })
 
     const handlePassword = (e) => {
@@ -36,29 +41,39 @@ function SignUp() {
         setLogindata({...logindata, [name]: value })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         console.log(logindata);
-        toast.success('Login Success !')
+        try {
+            const res = await axios.post('http://127.0.0.1:8000/users/create/', {'username': logindata['username'], 'email': logindata['email'] ,'password': logindata['password']}, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            const data = res.data.refresh;
+    
+            console.log(data);
+            navigate('/')
+            toast.success('Successfully created!')
+        }catch(error) {
+            console.error(error)
+        }
     }
 
   return (
     <Box sx={{width:'100vw', height: '100vh' , display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Paper elevation={3}>
-            <Grid component='form' autoComplete="off" container sx={{display: 'flex', flexDirection: 'column', padding: '50px 50px'}}>
+            <Grid component='form' autoComplete="off" container sx={{display: 'flex', flexDirection: 'column', padding: '30px 30px'}}>
                 <Typography sx={{margin: '5px 10px', fontFamily: 'Roboto Slab, serif',fontSize: '30px', width: '300px'}}>Sign Up</Typography>
                 <TextField name='email'  value={logindata.email} onChange={handleChange} sx={{margin: '10px',}} label='Email' type='email' />
+                <TextField name='username'  value={logindata.username} onChange={handleChange} sx={{margin: '10px',}} label='Username' type='text' />
                 <TextField name='password' value={logindata.password} onChange={handleChange} sx={{margin: '10px'}} label='Password' type={click ? 'text' : 'password'} InputProps={{endAdornment: (<InputAdornment sx={{cursor: 'pointer', fontSize: '22px'}} position='end' onClick={handlePassword}>{click ? <BsEyeSlash/>: <BsEye/>} </InputAdornment>)}} />
-                <TextField name='cpassword' value={logindata.cpassword} onChange={handleChange} sx={{margin: '10px'}} label='Confirm Password' />
+                <TextField name='cpassword' value={logindata.cpassword} onChange={handleChange} sx={{margin: '10px'}} label='Confirm Password' type='password'/>
+                <Typography sx={{margin: '0 10px', color: 'gray'}}>Upload your profile picture</Typography>
+                <input name='photo' value={logindata.image} onChange={handleChange} type='file' accept='image/*' className='input-photo' />
+
                 <Button variant='contained' onClick={handleSubmit} sx={{margin: '0 10px 10px 10px'}} >Create an account</Button>
-                <Grid sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '5px 10px'}}>
-                    <Divider sx={{height: '0px', background: '#C5C5C5', width: '65px'}} />
-                    <Typography sx={{margin: '0px 20px', fontFamily: 'Poppins sans-serif', fontSize: '16px', color:'#C5C5C5'}}>Or with google account</Typography>
-                    <Divider sx={{height: '0px', background: '#C5C5C5', width: '65px'}}/>
-                </Grid>
-                <Grid sx={{padding: '10px'}}>
-                    <GoogleLoginOption name={'Signup with Google'} />
-                </Grid>
+
                 <Link to='/' style={{textDecoration: 'none'}}>
                     <Typography sx={{margin: '5px 10px',fontSize: '14px', color: '#000000' }}>Already had an account? <span style={{color: 'blue'}}>Login</span></Typography>
                 </Link> 

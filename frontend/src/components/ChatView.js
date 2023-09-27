@@ -3,7 +3,10 @@ import React, {Component, useState, useEffect} from 'react';
 import {w3cwebsocket as W3Cwebsocket} from 'websocket';
 import { makeStyles } from '@mui/styles';
 import {AiOutlineSend} from 'react-icons/ai';
-import './Chat.css'
+import './Chat.css';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const FormStyles = makeStyles((theme) => ({
     root: {
@@ -25,15 +28,36 @@ const FormStyles = makeStyles((theme) => ({
 
 function Chat() {
     const classes = FormStyles;
-
+    const navigate = useNavigate();
+    const [cookie] = useCookies(['access_token']);
+    const [info, setInfo] = useState([]);
     const [message, setMessage] = useState({
-        filledForm: true,
+        filledForm: false,
         message: [],
-        value: '',
         name: '',
         person: false,
         // false = we sent message
+        room: '',
     })
+
+    useEffect(() => {
+        const getData = async () => {
+          const id = cookie.access_token;
+          try {
+            const res = await axios.get('http://127.0.0.1:8000/chat/get_rooms/', {
+              headers: {
+                Authorization: 'Bearer ' + id,
+              },
+            });
+            const data = res.data;
+            setInfo(data);
+            console.log(res.data);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        getData();
+      });
       
 
   return (

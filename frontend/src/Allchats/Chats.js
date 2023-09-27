@@ -1,132 +1,81 @@
-import React, { useEffect, useState } from 'react'
-import Chat from './Chat'
+import React, { useEffect, useState } from 'react';
+import Chat from './Chat';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-export default function Chats({searchText}) {
-  const chatdetails = [
-    {
-      name: 'Ameesha',
-      Status: 'online',
-      imagesrc: 'https://w7.pngwing.com/pngs/129/292/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png'
-    },
-    {
-      name: 'John',
-      Status: 'offline',
-      imagesrc: 'https://e7.pngegg.com/pngimages/670/509/png-clipart-avatar-female-girls-avatar-purple-face.png'
-    },
-    {
-      name: 'Sarah',
-      Status: 'away',
-      imagesrc: 'https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png'
-    },
-    {
-      name: 'Mike',
-      Status: 'online',
-      imagesrc: 'https://i.pinimg.com/474x/4b/d5/d7/4bd5d78656591dbe5868562168adaef3.jpg'
-    },
-    {
-      name: 'Emily',
-      Status: 'online',
-      imagesrc: 'https://i.pinimg.com/736x/a0/a9/9d/a0a99dbb6f2e31ac936330b500cbbcb2.jpg'
-    },
-    {
-      name: 'David',
-      Status: 'offline',
-      imagesrc: 'https://e7.pngegg.com/pngimages/670/509/png-clipart-avatar-female-girls-avatar-purple-face.png'
-    },
-    {
-      name: 'Alice',
-      Status: 'online',
-      imagesrc: 'https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png'
-    },
-    {
-      name: 'Sophia',
-      Status: 'away',
-      imagesrc: 'https://i.pinimg.com/474x/4b/d5/d7/4bd5d78656591dbe5868562168adaef3.jpg'
-    },
-    {
-      name: 'Robert',
-      Status: 'offline',
-      imagesrc: 'https://i.pinimg.com/736x/a0/a9/9d/a0a99dbb6f2e31ac936330b500cbbcb2.jpg'
-    },
-    {
-      name: 'Olivia',
-      Status: 'online',
-      imagesrc: 'https://w7.pngwing.com/pngs/129/292/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png'
-    },
-    {
-      name: 'Michael',
-      Status: 'online',
-      imagesrc: 'https://w7.pngwing.com/pngs/129/292/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png'
-    },
-    {
-      name: 'Emma',
-      Status: 'away',
-      imagesrc: 'https://i.pinimg.com/736x/a0/a9/9d/a0a99dbb6f2e31ac936330b500cbbcb2.jpg'
-    },
-    {
-      name: 'William',
-      Status: 'offline',
-      imagesrc: 'https://i.pinimg.com/474x/4b/d5/d7/4bd5d78656591dbe5868562168adaef3.jpg'
-    },
-    {
-      name: 'Michael',
-      Status: 'online',
-      imagesrc: 'https://w7.pngwing.com/pngs/129/292/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png'
-    },
-    {
-      name: 'Emma',
-      Status: 'away',
-      imagesrc: 'https://i.pinimg.com/736x/a0/a9/9d/a0a99dbb6f2e31ac936330b500cbbcb2.jpg'
-    },
-    {
-      name: 'William',
-      Status: 'offline',
-      imagesrc: 'https://i.pinimg.com/474x/4b/d5/d7/4bd5d78656591dbe5868562168adaef3.jpg'
-    },
-    {
-      name: 'Michael',
-      Status: 'online',
-      imagesrc: 'https://w7.pngwing.com/pngs/129/292/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png'
-    },
-    {
-      name: 'Emma',
-      Status: 'away',
-      imagesrc: 'https://i.pinimg.com/736x/a0/a9/9d/a0a99dbb6f2e31ac936330b500cbbcb2.jpg'
-    },
-    {
-      name: 'William',
-      Status: 'offline',
-      imagesrc: 'https://i.pinimg.com/474x/4b/d5/d7/4bd5d78656591dbe5868562168adaef3.jpg'
-    },
-    {
-      name: 'Michael',
-      Status: 'online',
-      imagesrc: 'https://w7.pngwing.com/pngs/129/292/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png'
-    },
-    {
-      name: 'Emma',
-      Status: 'away',
-      imagesrc: 'https://i.pinimg.com/736x/a0/a9/9d/a0a99dbb6f2e31ac936330b500cbbcb2.jpg'
-    },
-    {
-      name: 'William',
-      Status: 'offline',
-      imagesrc: 'https://i.pinimg.com/474x/4b/d5/d7/4bd5d78656591dbe5868562168adaef3.jpg'
-    },
-  ];
+export default function Chats({ searchText }) {
+  const navigate = useNavigate();
+  const [cookie] = useCookies(['access_token']);
+  const [info, setInfo] = useState([]);
+  const [chatdetails, setChatDetails] = useState([]);
   const [filteredChatdetails, setFilteredDetails] = useState([]);
-  useEffect(() => {
-    const filtereddetails = chatdetails.filter((chatdetail) =>
-      chatdetail.name.toLowerCase().includes(searchText.toLowerCase())
-    );
-    setFilteredDetails(filtereddetails);
-  }, [searchText]);
   
+  console.log(cookie.refresh_token);
+
+  useEffect(() => {
+    if (!cookie.access_token) {
+      navigate('/');
+    }
+  }, [cookie.access_token]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const id = cookie.access_token;
+      try {
+        const res = await axios.get('http://127.0.0.1:8000/chat/get_rooms/', {
+          headers: {
+            Authorization: 'Bearer ' + id,
+          },
+        });
+        const data = res.data;
+        setInfo(data);
+
+        // Collect chat details based on room_type
+        const newChatDetails = data.map((chat) => {
+          if (chat.room_type === 2) {
+            return chat.display_name;
+          } else {
+            return chat.room_members[1];
+          }
+        });
+
+        setChatDetails(newChatDetails);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getData();
+  });
+
+  useEffect(() => {
+    const filteredDetails = chatdetails.filter((chatdetail) =>
+      chatdetail.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredDetails(filteredDetails);
+  }, [chatdetails, searchText]);
+
+  const handleClicked = () => {
+    alert('clicked');
+  }
+
   return (
-    <div style={{ backgroundColor: '#fff', padding: '0 5px', overflowY: 'scroll', height: '100%' }} className="custom-scrollbar">
-      {filteredChatdetails.map((chatdetail,index) => (
-        <Chat key={index} name={chatdetail.name} status={chatdetail.Status} imagesrc={chatdetail.imagesrc} />
+    <div
+      style={{
+        backgroundColor: '#fff',
+        padding: '0 5px',
+        overflowY: 'scroll',
+        height: '100%',
+      }}
+      className="custom-scrollbar"
+    >
+      {filteredChatdetails.map((chatDetail, index) => (
+        <div key={index} onClick={handleClicked} >
+          <div>
+            <Chat name={chatDetail}/>
+          </div>
+        </div>
       ))}
     </div>
-  )
+  );
 }

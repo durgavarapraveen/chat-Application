@@ -10,7 +10,7 @@ export default function Allchats() {
     <Box className='chatsbox' >
       <Chatstopbar />
       <Search searchText={searchText} setSearchtext={setSearchtext} set={true}/>
-      <Chats searchText={searchText}/>
+      <Chats searchText={searchText} />
     </Box>
   )
 }
