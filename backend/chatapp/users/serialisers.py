@@ -6,15 +6,15 @@ class ChatUserSerializer(serializers.ModelSerializer):
     Currently unused in preference of the below.
     """
     
-    email = serializers.EmailField(
-        required=True
-    )
-    username = serializers.CharField()
-    password = serializers.CharField(min_length=8, write_only=True)
+    # email = serializers.EmailField(
+    #     required=True
+    # )
+    # username = serializers.CharField()
+    # password = serializers.CharField(min_length=8, write_only=True)
 
     class Meta:
         model = ChatUser
-        fields = ('email', 'username', 'password')
+        fields = ('email', 'username', 'password', 'profile_photo')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

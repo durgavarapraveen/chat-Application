@@ -15,11 +15,18 @@ from users.models import ChatUser
 
 room_types = [(1,"personal"),(2,"group")]
 
+def room_display_photo_path(instance,filename):
+    # ext= filename.split('.')[-1]
+    # filename='{}.{}'.format(str(instance.usr.id)+str('_dp'),ext)
+    return '{0}/{1}/{2}/{3}'.format('rooms',instance.id,'display_photo',filename)
+
 class Room(models.Model):
     users = models.ManyToManyField(ChatUser, related_name='rooms' ,blank=True)
     room_type = models.IntegerField(room_types, default=2)
     room_name = models.CharField(max_length=600,unique=True)
     display_name = models.CharField(max_length=1000, blank=True, null=True)
+    display_photo = models.ImageField(null=True, blank=True, upload_to=room_display_photo_path)
+
     def __str__(self):
         return str(self.room_name)
 
