@@ -35,13 +35,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #installed apps
+    
     'channels',
     'corsheaders',
     'rest_framework',
@@ -82,9 +84,13 @@ TEMPLATES = [
     },
 ]
 
+
+
+ASGI_APPLICATION = 'chatapp.asgi.application'
+
 WSGI_APPLICATION = 'chatapp.wsgi.application'
 
-
+# print('came')
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -140,7 +146,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 DEFAULT_AUTHENTICATION_CLASSES = []
 
 
-ASGI_APPLICATION = "chatapp.asgi.application" #routing.py will handle the ASGI
+
+
+
+#routing.py will handle the ASGI
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': "channels.layers.InMemoryChannelLayer"
