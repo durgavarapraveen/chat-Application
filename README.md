@@ -15,11 +15,13 @@ All the required packages are in requirements.txt file in chat app folder
 ### Main packages installed are:
     Channels with daphne
     rest_framework
+    rest_framework_simplejwt
 
 ### Important Libraries used are:
     serializers -- To convert json data to python data types and vice- versa
     APIView -- To render response in json format easily acting like interface between frontend and backend
     channels -- To make live chat possible, making django asynchronus application
+    rest_framework_simplejwt -- for user authentication
 
 ### Running backend:
     Make sure that python>3.7 is installed
@@ -29,3 +31,18 @@ All the required packages are in requirements.txt file in chat app folder
         python manage.py makemigrations
         python manage.py migrate
         python manage.py runserver
+
+## Front end
+Built with React
+
+All the code of frontend is in frontend folder.
+
+### Main packages installed are:
+    Web3sockets -- for live chat 
+    MaterialUI -- for ui designing
+    Axios -- for getting information from rest_api
+    react-cookie -- for storing jwt token
+
+### Runing frontend:
+    npm i --force
+    npm start
