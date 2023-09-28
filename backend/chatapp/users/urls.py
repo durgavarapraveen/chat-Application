@@ -18,10 +18,11 @@ from django.urls import path, include
 
 from rest_framework_simplejwt import views as jwt_views
 
-from .views import LogoutView, UserCreationView
+from .views import LogoutView, UserCreationView, ChatUsersView
 
 urlpatterns = [
     path('create/', UserCreationView.as_view(), name='usercreation' ),
+    path('all/', ChatUsersView.as_view(), name='get_all'),
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='obtain_access_token' ),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='refresh_token'),
     path('logout/', LogoutView.as_view(), name='logout'),

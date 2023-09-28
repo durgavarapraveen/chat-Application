@@ -24,3 +24,14 @@ class ChatUserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+    
+class ChatUsersSerializer(serializers.ModelSerializer):
+    dp_url = serializers.SerializerMethodField('get_dp_url')
+    class Meta:
+        model = ChatUser
+        fields = ('username', 'id', 'dp_url')
+    def get_dp_url(self, instance):
+        if (instance.profile_photo):
+            return instance.profile_photo.url
+        else:
+            return None

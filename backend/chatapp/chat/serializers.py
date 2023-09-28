@@ -1,4 +1,7 @@
 from rest_framework import serializers
+
+from users.models import ChatUser
+
 from .models import Chat, Room
 
 class ChatsSerializer(serializers.ModelSerializer):
@@ -21,13 +24,26 @@ class RoomsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ['users', 'room_type', 'room_name', 'display_name', 'other_users']
+        
+    def create(self, validated_data):
+        # usernames = validated_data.pop('users', None)
+        # users=[]
+        # for username in usernames:
+        #     user = ChatUser.objects.get(username=username)
+        #     users.append(user)
+        # validated_data['users'] = users
+        
+        data = super().create(validated_data)
+
+        data.pop('display_photo', None)
+        return data
 
     def get_other_users(self, instance):
         usernames = []
         for user in instance.users.all():
             if user.id!=self.context.get("user_id"):
                 usernames.append(user.username)
-        return 
+        return usernames
     
     # def get_dp(self, instance):
     #     if instance.room_type == 1:

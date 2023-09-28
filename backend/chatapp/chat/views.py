@@ -24,9 +24,9 @@ from .serializers import ChatsSerializer, RoomsSerializer
 class ChatsApiView(APIView):
     permission_classes = (IsAuthenticated, )
     
-    def get(self, request):
-        room_name = request.data['room_name']
-        access_token = request.data['access']
+    def get(self, request, room_name):
+        # room_name = request.data['room_name']
+        access_token = str(request.headers['Authorization']).split(' ')[1]
         access_token = AccessToken(access_token)
         user = ChatUser.objects.get(id=int(access_token['user_id']))
         room =  Room.objects.get(room_name=room_name)
@@ -36,7 +36,9 @@ class ChatsApiView(APIView):
             return Response({'room_name': room.room_name, 'chats':sending_data.data})
         else:
             return Response({'detail':'user not part of room', 'code':400})
-        
+
+
+
 
 class RoomsApiView(APIView):
     permission_classes = (IsAuthenticated,)

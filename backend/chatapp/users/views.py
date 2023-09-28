@@ -9,7 +9,8 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 # Create your views here.
 
-from .serialisers import ChatUserSerializer
+from .serialisers import ChatUserSerializer, ChatUsersSerializer
+from .models import ChatUser
 
 
 class UserCreationView(APIView):
@@ -23,6 +24,15 @@ class UserCreationView(APIView):
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ChatUsersView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        chat_users= ChatUser.objects.all()
+        users_data = ChatUsersSerializer(chat_users, many=True)
+        return Response(users_data.data)
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated, )

@@ -26,102 +26,96 @@ const FormStyles = makeStyles((theme) => ({
 }));
 
 
-function Chat({data}) {
+function Chat({data, visible, roomNo}) {
     const classes = FormStyles;
     const navigate = useNavigate();
     const [cookie] = useCookies(['access_token']);
     const [info, setInfo] = useState([]);
     const [message, setMessage] = useState({
-        display: false,
-        text: '',
-        name: '',
-        person: false,
+        display: visible,
         room: '1_1',
     });
+    const username = localStorage.getItem('username');
+    const [msg, setMsg] = useState('');
+    const [room, setRoom] = useState('');
+
+    const [chats, setChats] = useState([]);
+    const [jsMsg, setJsMsg] = useState([]);
+    const [roomName, setRoomname] = useState('');
+      
 
     useEffect(() => {
-        if (data.room_Type === 1 || data.room_Type === 2) {
-          const updatedMessage = {
-            ...message, 
-            display: true, 
-            room: data.room_No,
-          };
-          setMessage(updatedMessage);
+        const Getdata = async() => {
+            const id = cookie.access_token;
+            const res = await axios.get(`http://127.0.0.1:8000/chat/get_chats/${roomNo}/`, {
+                headers: {
+                    Authorization: 'Bearer ' + id,
+                },
+            });
+            const data = res.data.chats;
+            
+            setChats(data)
+            setRoomname(res.data.room_name);
         }
-      }, [data.room_Type]);
+        Getdata();
+    }, [])
 
-    const [messages, setMessages] = useState([]);
+
+    console.log(roomNo);
+    const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/chat/' + roomNo + '/');
 
     useEffect(() => {
-
-        const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/chat/' + message.room + '/');
-
-        let hasConnected = false;
-
         client.onopen = () => {
-            if (!hasConnected) {
-                console.log("WebSocket Client Connected");
-                hasConnected = true;
-            }
+            console.log("WebSocket Client Connected");
         };
-
-
         client.onmessage = (message) => {
-        const dataFromServer = JSON.parse(message.data);
-        if (dataFromServer) {
-            setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-                msg: dataFromServer.text,
-                name: dataFromServer.sender,
-            },
-            ]);
-        }
-        };
-
-        return () => {
-        client.close();
+            const dataFromServer = JSON.parse(message.data);
+            if (dataFromServer) {
+                setJsMsg((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        message: dataFromServer.message,
+                        username: dataFromServer.username,
+                    },
+                ]);
+            }
+            console.log("msh", jsMsg)
         };
     }, []);
 
+    const handleChange = (e) => {
+        setMsg(e.target.value);
+    }
+
     const handleMessageSend = (e) => {
-        // client.send(
-        //     JSON.stringify({
-        //         type: "message",
-        //         text: messages,
-        //     })
-        // );
-        if(message.text != "") {
+        const chatMessege = JSON.stringify({
+                                'message': msg,
+                                'username': username,
+                                'room_name': roomName,         
+                            })
+
+        client.send(chatMessege)
+
+        if(msg != "") {
             const value = "";
-            setMessage({...message, text: value})
-            e.preventDefault();
+            setMsg(value);
             console.log('msg send')
         }
         e.preventDefault();
+
     }
-
-    const handleChange = (e) => {
-        const value = e.target.value;
-        setMessage({...message, text: value})
-    }
-
-    const handleBack = () => {
-        setMessage({...message, filledForm: false})
-    }
-
-
 
   return (
     <Box className='viewtop'>
         {
-            message.display ? (
+            visible ? (
                 <Box sx={{position: 'relative', height: '100vh',overflow: 'hidden', width: '100%'}}>
                     <Grid className='Sender-profile'>
                         {/* To display name and photo of the person with who we are talking */}
-                        <i class="fa-solid fa-arrow-left back-icon" onClick={handleBack}></i>
+                        {/* <i class="fa-solid fa-arrow-left back-icon" onClick={handleBack}></i> */}
                         <img src='photos/Praveen Profile Pic.png' className='photo-chat' />
                         <Grid sx={{display: 'flex', flexDirection: 'column', marginLeft: '10px'}}>
-                            <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '19px', fontWeight: 700}}>John</Typography>
+                            <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '19px', fontWeight: 700}}>{data.name} </Typography>
                             <Typography className='p' sx={{fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0', fontSize: '12px'}}>select for more info</Typography>
                         </Grid>
                     </Grid>
@@ -132,18 +126,28 @@ function Chat({data}) {
 
                             <Grid sx={{display: 'flex', flexDirection: 'column', width: '100%', overflowY: 'scroll', overflowX: 'hidden', height: 'calc(100vh - 140px)'}}>
 
+
                                 {
-                                    messages.map((mess) => {
-                                        <>
-                                            <Grid className={true ? 'message-recieve' : 'message-send'} >
-                                                <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
-                                                    <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >Jack</Typography>
-                                                    <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>{mess.text}</Typography>
-                                                </Grid>
+                                    chats.map((chat, index) => (
+                                        <Grid key={index} className={username !== chat.username ? 'message-recieve' : 'message-send'}   >
+                                            <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
+                                                <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >{chat.username}</Typography>
+                                                <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>{chat.message}</Typography>
                                             </Grid>
-                                        </>
-                                    })
+                                        </Grid>
+                                    ))
                                 }
+
+                                {jsMsg.map((message, index) => (
+                                    <Grid key={index} className={username !== message.username ? 'message-recieve' : 'message-send'}   >
+                                        <Grid sx={{background: '#FFFFFF', width: 'auto', display: 'inline-block', padding: '5px 35px 5px 10px', borderRadius: '8px', maxWidth: '500px', }}>
+                                            <Typography sx={{fontFamily: 'Mooli, sans-serif', fontSize: '16px', fontWeight: 700}} >{message.username}</Typography>
+                                            <Typography className='p' sx={{maxWidth: '500px !important', fontFamily: 'Poppins, sans-serif', color: ' #4C4646', margin: '2px 0'}}>{message.message}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                ))}
+
+
 
                             </Grid> 
                         </Grid>
@@ -152,7 +156,7 @@ function Chat({data}) {
 
                     <Grid component='form' sx={{position: 'absolute', bottom: '0', width: '100%', backgroundColor: '#ffffff',}}>
                         <Grid sx={{position: 'relative'}}>
-                            <TextareaAutosize name='text' className={classes.textarea} minRows={1} style={{width: '100%', padding: '3px 0px', border: 'none', backgroundColor: '#ffffff',outline: 'none', minHeight: '20px', maxHeight: '60px', fontSize: '16px', padding: '20px 50px', fontFamily: 'Mooli, sans-serif'}} placeholder='Type youe message' value={message.text} onChange={handleChange}/>
+                            <TextareaAutosize name='text' className={classes.textarea} minRows={1} style={{width: '100%', padding: '3px 0px', border: 'none', backgroundColor: '#ffffff',outline: 'none', minHeight: '20px', maxHeight: '60px', fontSize: '16px', padding: '20px 50px', fontFamily: 'Mooli, sans-serif'}} placeholder='Type youe message' value={msg} onChange={handleChange}/>
                             <button className='btn-send' onClick={handleMessageSend}><AiOutlineSend className='icon-send' /></button>
                         </Grid>
                     </Grid>

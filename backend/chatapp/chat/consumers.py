@@ -3,10 +3,12 @@ from urllib import request
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 from datetime import datetime
+
+from users.models import ChatUser
 
 from .models import Room, Chat
 
@@ -40,8 +42,8 @@ class ChatConsumer(WebsocketConsumer):
         # receiver_txt=text_data_json['receiver']
         # user_role=text_data_json['user_role']
         room_name=text_data_json['room_name']
-        usr=self.scope['user']
-        usr=User.objects.get(username=(usr.username))
+        username=text_data_json['username']
+        usr=ChatUser.objects.get(username=username)
         # receiver=User.objects.get(username=receiver_txt)
         rm = Room.objects.get(room_name=room_name)
         mssg= Chat.objects.create(message=message_text,user = usr, room= rm, time_send= datetime.now())
@@ -52,8 +54,9 @@ class ChatConsumer(WebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message_text,
-                'msg':message_text,
+                # 'msg':message_text,
                 # 'user_role':user_role,
+                'username':username,
                 'sent_time':sent_time,
                 # 'receiver':receiver_txt,
                 'room_name':room_name,
@@ -68,13 +71,13 @@ class ChatConsumer(WebsocketConsumer):
         # receiver_txt=str(event['receiver'])
         # user_role=str(event['user_role'])
         room_name=str(event['room_name'])
-        user=self.scope['user']
-        user=User.objects.get(username=(user.username))
+        username = str(event['username'])
+        user=ChatUser.objects.get(username=username)
         # receiver=User.objects.get(username=receiver_txt)
-        room=Room.objects.get(room_name=room_name)
-        chat=Chat.objects.get(message=message_text,user=user, room=room, time_sent = sent_time)
+        # room=Room.objects.get(room_name=room_name)
+        # chat=Chat.objects.get(message=message_text,user=user, room=room, time_send = sent_time)
         
-        print(chat)
+        # print(chat)
         
         # for mssg in msgs:
         #     print(str(mssg.time_send),"  ",sent_time)
@@ -91,5 +94,5 @@ class ChatConsumer(WebsocketConsumer):
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message_text,
-            'user_id': user.id
+            'username': user.username
         }))

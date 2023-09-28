@@ -18,7 +18,7 @@ function Login() {
     const [cookie, setCookies] = useCookies(["access_token"]);
     const [refreshcookie, setrefreshCookies] = useCookies(["refresh_token"]);
     const [logindata, setLogindata] = useState({
-        email: '',
+        username: '',
         password: '',
     })
 
@@ -44,7 +44,7 @@ function Login() {
     const handleSubmit = async(e) => {
         
         try {
-            const res = await axios.post('http://127.0.0.1:8000/users/token/', {'username': logindata['email'], 'password': logindata['password']}, {
+            const res = await axios.post('http://127.0.0.1:8000/users/token/', {'username': logindata['username'], 'password': logindata['password']}, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -54,6 +54,7 @@ function Login() {
             setrefreshCookies('refresh_token', res.data.refresh)
     
             console.log(res.data);
+            localStorage.setItem('username', logindata.username)
             navigate('/home')
 
             // toast.success('Login Success !')
@@ -67,7 +68,7 @@ function Login() {
         <Paper elevation={3}>
             <Grid component='form' autoComplete="off" container sx={{display: 'flex', flexDirection: 'column', padding: '50px 50px'}}>
                 <Typography sx={{margin: '5px 10px', fontFamily: 'Roboto Slab, serif',fontSize: '30px', width: '300px'}}>Login</Typography>
-                <TextField name='email'  value={logindata.email} onChange={handleChange} sx={{margin: '10px'}} label='Username' type='email' />
+                <TextField name='username'  value={logindata.username} onChange={handleChange} sx={{margin: '10px'}} label='Username' type='text' />
                 <TextField name='password' value={logindata.password} onChange={handleChange} sx={{margin: '10px'}} label='Password' type={click ? 'text' : 'password'} InputProps={{endAdornment: (<InputAdornment sx={{cursor: 'pointer', fontSize: '22px'}} position='end' onClick={handlePassword}>{click ? <BsEyeSlash/>: <BsEye/>} </InputAdornment>)}} />
                 <Button variant='contained' onClick={handleSubmit} sx={{margin: '0 10px 10px 10px'}} >Create an account</Button>
                 {/* <Grid sx={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '5px 10px'}}>

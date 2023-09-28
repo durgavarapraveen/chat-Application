@@ -4,7 +4,7 @@ import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function Chats({ searchText, setData}) {
+export default function Chats({ searchText, setData, setDisplay,setrooms}) {
   const navigate = useNavigate();
   const [cookie] = useCookies(['access_token']);
   const [info, setInfo] = useState([]);
@@ -20,6 +20,7 @@ export default function Chats({ searchText, setData}) {
   useEffect(() => {
     const getData = async () => {
       const id = cookie.access_token;
+      console.log(cookie);
       try {
         const res = await axios.get('http://127.0.0.1:8000/chat/get_rooms/', {
           headers: {
@@ -31,9 +32,9 @@ export default function Chats({ searchText, setData}) {
         setInfo(data);
         const newChatDetails = data.map((chat) => {
           if (chat.room_type === 2) {
-            return {name: chat.display_name, room_No: chat.room_name, room_Type: chat.room_type};
+            return {name: chat.display_name, room_No: chat.room_name, room_Type: chat.room_type, otherUser: chat.other_users};
           } else {
-            return {name: chat.room_members[1], room_No: chat.room_name, room_Type: chat.room_type}
+            return {name: chat.other_users, room_No: chat.room_name, room_Type: chat.room_type, otherUser: chat.other_users}
           }
         });
 
@@ -52,8 +53,13 @@ export default function Chats({ searchText, setData}) {
     setFilteredDetails(filteredDetails);
   }, [chatdetails, searchText]);
 
-  const handleClicked = () => {
-    setData(chatdetails);
+  const handleClicked = async () => {
+    console.log(chatdetails);
+    await setData(chatdetails);
+    console.log(chatdetails[0]['room_No']);
+    setrooms(chatdetails[0]['room_No']);
+    setDisplay(true);
+    // notify();
   }
   
 
