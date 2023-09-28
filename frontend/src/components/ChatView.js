@@ -45,42 +45,48 @@ function Chat({data, visible, roomNo}) {
       
 
     useEffect(() => {
-        const Getdata = async() => {
-            const id = cookie.access_token;
-            const res = await axios.get(`http://127.0.0.1:8000/chat/get_chats/${roomNo}/`, {
-                headers: {
-                    Authorization: 'Bearer ' + id,
-                },
-            });
-            const data = res.data.chats;
-            
-            setChats(data)
-            setRoomname(res.data.room_name);
+        if(visible == true){
+            console.log(data);
+            const Getdata = async() => {
+                const id = cookie.access_token;
+                const res = await axios.get(`http://127.0.0.1:8000/chat/get_chats/${data[0]['room_id']}/`, {
+                    headers: {
+                        Authorization: 'Bearer ' + id,
+                    },
+                });
+                const chat_data = res.data.chats;
+                console.log(chat_data);
+                setChats(chat_data)
+                setRoomname(res.data.room_name);
+            }
+            Getdata();
         }
-        Getdata();
     }, [])
 
-
-    console.log(roomNo);
-    const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/chat/' + roomNo + '/');
-
+    console.log(visible);
+    console.log(data);
+    if(visible){
+        const client = new W3Cwebsocket('ws://127.0.0.1:8000/ws/chat/' + data[0]['room_id'] + '/');
+    }
     useEffect(() => {
-        client.onopen = () => {
-            console.log("WebSocket Client Connected");
-        };
-        client.onmessage = (message) => {
-            const dataFromServer = JSON.parse(message.data);
-            if (dataFromServer) {
-                setJsMsg((prevMessages) => [
-                    ...prevMessages,
-                    {
-                        message: dataFromServer.message,
-                        username: dataFromServer.username,
-                    },
-                ]);
-            }
-            console.log("msh", jsMsg)
-        };
+        if(visible){
+            client.onopen = () => {
+                console.log("WebSocket Client Connected");
+            };
+            client.onmessage = (message) => {
+                const dataFromServer = JSON.parse(message.data);
+                if (dataFromServer) {
+                    setJsMsg((prevMessages) => [
+                        ...prevMessages,
+                        {
+                            message: dataFromServer.message,
+                            username: dataFromServer.username,
+                        },
+                    ]);
+                }
+                console.log("msh", jsMsg)
+            };
+        }
     }, []);
 
     const handleChange = (e) => {
@@ -93,9 +99,9 @@ function Chat({data, visible, roomNo}) {
                                 'username': username,
                                 'room_name': roomName,         
                             })
-
-        client.send(chatMessege)
-
+        if(visible){
+            client.send(chatMessege)
+        }
         if(msg != "") {
             const value = "";
             setMsg(value);

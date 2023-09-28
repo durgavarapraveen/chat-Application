@@ -32,9 +32,9 @@ export default function Chats({ searchText, setData, setDisplay,setrooms}) {
         setInfo(data);
         const newChatDetails = data.map((chat) => {
           if (chat.room_type === 2) {
-            return {name: chat.display_name, room_No: chat.room_name, room_Type: chat.room_type, otherUser: chat.other_users};
+            return {name: chat.display_name, room_id:chat.id, room_No: chat.room_name, room_Type: chat.room_type, otherUser: chat.other_users};
           } else {
-            return {name: chat.other_users, room_No: chat.room_name, room_Type: chat.room_type, otherUser: chat.other_users}
+            return {name: chat.other_users, room_id:chat.id, room_No: chat.room_name, room_Type: chat.room_type, otherUser: chat.other_users}
           }
         });
 

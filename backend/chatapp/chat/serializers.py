@@ -19,11 +19,11 @@ class ChatsSerializer(serializers.ModelSerializer):
 
 class RoomsSerializer(serializers.ModelSerializer):
     # room_members = serializers.SerializerMethodField('get_room_members')
-    # dp = serializers.SerializerMethodField('get_dp')
+    dp_url = serializers.SerializerMethodField('get_dp')
     other_users = serializers.SerializerMethodField('get_other_users')
     class Meta:
         model = Room
-        fields = ['users', 'room_type', 'room_name', 'display_name', 'other_users']
+        fields = ['id', 'users', 'room_type', 'room_name', 'display_name', 'other_users', 'dp_url']
         
     def create(self, validated_data):
         # usernames = validated_data.pop('users', None)
@@ -33,10 +33,10 @@ class RoomsSerializer(serializers.ModelSerializer):
         #     users.append(user)
         # validated_data['users'] = users
         
-        data = super().create(validated_data)
+        room = super().create(validated_data)
 
-        data.pop('display_photo', None)
-        return data
+        # data.pop('display_photo', None)
+        return room
 
     def get_other_users(self, instance):
         usernames = []
@@ -45,11 +45,18 @@ class RoomsSerializer(serializers.ModelSerializer):
                 usernames.append(user.username)
         return usernames
     
-    # def get_dp(self, instance):
-    #     if instance.room_type == 1:
-    #         for user in instance.users.all():
-    #             if user.id!=self.context.get("user_id"):
-    #                 return user.profile_photo
-    #     elif instance.room_type == 2:
-    #         return instance.display_photo
+    def get_dp(self, instance):
+        if instance.room_type == 1:
+            for user in instance.users.all():
+                if user.id!=self.context.get("user_id"):
+                    if user.profile_photo:
+                        return user.profile_photo.url
+                    else:
+                        return None
+                
+        elif instance.room_type == 2:
+            if instance.display_photo:
+                return instance.display_photo.url
+            else:
+                return None
     

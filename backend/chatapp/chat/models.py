@@ -23,7 +23,7 @@ def room_display_photo_path(instance,filename):
 class Room(models.Model):
     users = models.ManyToManyField(ChatUser, related_name='rooms' ,blank=True)
     room_type = models.IntegerField(room_types, default=2)
-    room_name = models.CharField(max_length=600,unique=True)
+    room_name = models.CharField(max_length=600, null=True, blank=True)
     display_name = models.CharField(max_length=1000, blank=True, null=True)
     display_photo = models.ImageField(null=True, blank=True, upload_to=room_display_photo_path)
 
