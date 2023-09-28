@@ -24,9 +24,9 @@ All the required packages are in requirements.txt file in chat app folder
     rest_framework_simplejwt -- for user authentication
 
 ### Running backend:
-    Make sure that python>3.7 is installed
-    In terminal reach to chatapp folder in backend folder --> cd backend/chatapp
-    Then run the following commands in terminal:
+Make sure that python>3.7 is installed
+In terminal reach to chatapp folder in backend folder --> cd backend/chatapp
+Then run the following commands in terminal:
         pip install -r requirements.txt
         python manage.py makemigrations
         python manage.py migrate
